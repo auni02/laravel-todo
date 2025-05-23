@@ -45,6 +45,42 @@ First of all, I use a Bootstrap template because I'm not good at coding.
 4. Run `php artisan migrate`
 5. Run `php artisan serve`
 
+# ASSIGNMENT2
+
+### 1. Multi-Factor Authentication (MFA) via Email
+- MFA is implemented using a custom mechanism (not Google Authenticator).
+- A **6-digit verification code** is generated and emailed to the user after a successful login attempt.
+- Users must enter the MFA code to access the dashboard.
+- Code expires in **5 minutes**.
+- Related fields added in `users` table:
+  - `mfa_code`
+  - `mfa_expires_at`
+
+### 2. Strong Password Hashing + Salting
+- Passwords are hashed using **Bcrypt** via Laravel’s built-in `Hash::make()`.
+- Additionally, a **random salt** (alphanumeric string) is generated for each user during registration.
+- This salt is stored in the `salt` column in the `users` table and combined with the password before hashing.
+
+
+### 3. Input Validation
+- Validation implemented during:
+  - Registration (`name`, `email`, `password`, `password_confirmation`)
+  - Login (`email`, `password`)
+  - Profile updates
+- Server-side validation is handled using Laravel’s `Validator` and `validate()` methods.
+
+---
+
+## 🧩 Technical Implementation Summary
+
+| Module        | Description |
+|---------------|-------------|
+| `AuthController` | Handles registration, login, logout, MFA code verification, and profile update. |
+| `routes/web.php` | Defines routes for registration, login, MFA verification, and profile. |
+| `resources/views/auth` | Contains Blade templates for login, register, and MFA form. |
+| `users` table | Updated with `salt`, `mfa_code`, `mfa_expires_at` columns. |
+| `RateLimiter::for('login')` | Limits login attempts by IP using Laravel’s throttle middleware. |
+
 # ASSIGNMENT3
 
 This is a Laravel-based To-Do App project with extended authentication and authorization features based on security principles. This project was developed for **Assignment 1 & 2**.
