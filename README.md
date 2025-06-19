@@ -120,7 +120,54 @@ This is a Laravel-based To-Do App project with extended authentication and autho
   - `user_roles` (`id`, `user_id`, `role_name`, `description`)
   - `role_permissions` (`id`, `role_id`, `description`)
 - Button visibility and access control is based on assigned permissions
-- 
+  
+# 📘 ASSIGNMENT 4 – XSS, CSRF & CSP SECURITY ENHANCEMENTS
+
+This section documents the implementation of advanced web security protections—**CSP**, **XSS defense**, and **CSRF protection**—within the Laravel-based To-Do App.
+
+## ✅ Overview of Security Features
+
+| Security Layer | Description |
+|----------------|-------------|
+| **CSP (Content Security Policy)** | Enforced via custom middleware to restrict scripts/styles to same-origin only. Prevents injection of malicious code from third-party origins. |
+| **XSS Prevention** | Laravel automatically escapes variables in Blade using `{{ }}`. All user inputs are validated and escaped to avoid script injection. |
+| **CSRF Protection** | Enabled by default in Laravel using `@csrf` directive in forms. CSRF token is required on every state-changing request. |
+
+## 🔐 Content Security Policy (CSP)
+
+| Aspect | Details |
+|--------|---------|
+| **Implementation** | Created `CspMiddleware.php` to add strict `Content-Security-Policy` headers. |
+| **Header Example** | `Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self';` |
+| **Applied To** | All routes via global middleware registration in `app/Http/Kernel.php`. |
+
+## 🛡️ XSS (Cross-Site Scripting) Prevention
+
+
+<!-- Safe Blade Output -->
+{{ $todo->title }}
+
+
+| Mechanism | Details |
+|-----------|---------|
+| **Output Escaping** | All variables are rendered with `{{ }}` in Blade, which auto-escapes HTML characters. |
+| **Validation** | Form inputs are validated via Laravel's `Validator` to ensure proper data formats. |
+| **Sanitization** | Optionally uses `strip_tags()` or custom sanitization logic for textarea fields (e.g., descriptions). |
+
+## 🔁 CSRF (Cross-Site Request Forgery) Protection
+
+| Mechanism | Description |
+|-----------|-------------|
+| **Token-Based Forms** | All forms include `@csrf`, which injects a hidden token field. |
+| **Laravel Middleware** | `VerifyCsrfToken` middleware is active by default. It checks for CSRF token on `POST`, `PUT`, `DELETE`, etc. |
+| **Protection Scope** | All user-authenticated routes and forms (login, register, create/edit/delete tasks). |
+
+<form method="POST" action="{{ route('todos.store') }}">
+    @csrf
+    <!-- other fields -->
+</form>
+
+
 ## Reference
 https://www.youtube.com/watch?v=egFodWSdMzY
 https://www.youtube.com/watch?v=g00WAcdYRpY
